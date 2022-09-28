@@ -1,11 +1,11 @@
-package com.example.blog.mapper;
+package com.example.blog.service;
 
 import com.example.blog.domain.BoardVO;
 
 import java.util.List;
 import java.util.Map;
 
-public interface BoardMapper {
+public interface BoardService {
     public List<BoardVO> getDocuments(Map<String, Object> params);
     public BoardVO getDocument(int seq);
     public int write(BoardVO board);

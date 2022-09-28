@@ -1,2 +1,4 @@
-package com.example.blog.Controller;public class MemberController {
+package com.example.blog.controller;
+
+public class MemberController {
 }
