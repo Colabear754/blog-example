@@ -53,7 +53,7 @@ public class BoardController {
         return "blog/document-list";
     }
 
-    @RequestMapping("/documnet")
+    @RequestMapping("/document")
     public String document(@RequestParam String seq, Model model) {
         // 블로그 글 보기
         BoardVO document = boardDao.getDocument(Integer.parseInt(seq));
