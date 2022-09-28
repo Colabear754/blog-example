@@ -25,6 +25,11 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public int getDocumentCount(int category_id) {
+        return mapper.getDocumentCount(category_id);
+    }
+
+    @Override
     public int write(BoardVO board) {
         return mapper.write(board);
     }
