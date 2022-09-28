@@ -8,10 +8,15 @@
             from (
                 select board.*
                 from board
-                <if test="category_id!=null">
-                    where CATEGORY_ID = #{category_id}
-                </if>
-                order by reg_time
+                <choose>
+                    <when test="category_id > 0">
+                        where CATEGORY_ID = #{category_id}
+                    </when>
+                    <when test="category_id < 0">
+                        where CATEGORY_ID is null
+                    </when>
+                </choose>
+                order by board.seq
             ) b
         ) a
         <![CDATA[where r >= #{start} and r <= #{end}]]>
@@ -21,6 +26,19 @@
         select *
         from board
         where seq = #{seq}
+    </select>
+
+    <select id="getDocumentCount" resultType="_int">
+        select count(*)
+        from BOARD
+        <choose>
+            <when test="category_id > 0">
+                where CATEGORY_ID = #{category_id}
+            </when>
+            <when test="category_id < 0">
+                where CATEGORY_ID is null
+            </when>
+        </choose>
     </select>
 
     <insert id="write">
