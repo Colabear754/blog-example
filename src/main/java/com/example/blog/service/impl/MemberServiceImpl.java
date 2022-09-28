@@ -14,8 +14,8 @@ public class MemberServiceImpl implements MemberService {
     private MemberMapper mapper;
 
     @Override
-    public boolean sign_in(Map<String, String> params) {
-        return mapper.sign_in(params);
+    public boolean sign_in(MemberVO member) {
+        return mapper.sign_in(member);
     }
 
     @Override
