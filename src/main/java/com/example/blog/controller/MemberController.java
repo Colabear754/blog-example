@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/members")
+@RequestMapping("/members/*")
 public class MemberController {
     @Autowired
     MemberMapper memberDao;
