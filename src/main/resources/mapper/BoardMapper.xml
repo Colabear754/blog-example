@@ -16,7 +16,7 @@
                         where CATEGORY_ID is null
                     </when>
                 </choose>
-                order by board.seq
+                order by board.seq desc
             ) b
         ) a
         <![CDATA[where r >= #{start} and r <= #{end}]]>
