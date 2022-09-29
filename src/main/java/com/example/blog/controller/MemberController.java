@@ -1,5 +1,6 @@
 package com.example.blog.controller;
 
+import com.example.blog.crypt.AES256;
 import com.example.blog.domain.MemberVO;
 import com.example.blog.mapper.MemberMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
+import java.security.GeneralSecurityException;
 import java.util.Map;
 
 @Controller
@@ -18,6 +20,7 @@ import java.util.Map;
 public class MemberController {
     @Autowired
     MemberMapper memberDao;
+    AES256 crypt;
 
     @RequestMapping("/is-duplicated")
     public String is_duplicated(@RequestParam String id, Model model) {
@@ -28,9 +31,15 @@ public class MemberController {
     }
 
     @RequestMapping(value = "/sign-up", method = RequestMethod.POST)
-    public String sign_up(@ModelAttribute MemberVO member, Model model) {
+    public String sign_up(@ModelAttribute MemberVO member, Model model) throws GeneralSecurityException {
         // 회원가입
         int result = -1;    // 1: 가입성공, 0: 이미 존재하는 회원, -1: 가입실패
+        // 회원가입 정보 암호화
+        member.setPassword(crypt.encrypt(member.getPassword()));
+        member.setName(crypt.encrypt(member.getName()));
+        member.setPhone(crypt.encrypt(member.getPhone()));
+        member.setDepartment(crypt.encrypt(member.getDepartment()));
+
         result = memberDao.sign_up(member);
 
         model.addAttribute("result", result);
@@ -39,11 +48,20 @@ public class MemberController {
     }
 
     @RequestMapping(value = "/updateMember", method = RequestMethod.POST)
-    public String updateMember(@ModelAttribute MemberVO member, Model model) {
+    public String updateMember(@ModelAttribute MemberVO member, @RequestParam String newPassword, Model model) throws GeneralSecurityException {
         // 회원정보 수정
         int result = -1;    //  1: 수정성공, 0: 해당 정보 없음, -1: 수정실패
+        // 회원 정보 암호화
+        member.setPassword(crypt.encrypt(member.getPassword()));
+        member.setName(crypt.encrypt(member.getName()));
+        member.setPhone(crypt.encrypt(member.getPhone()));
+        member.setDepartment(crypt.encrypt(member.getDepartment()));
+        newPassword = crypt.encrypt(newPassword);
 
         if (memberDao.sign_in(member)) {    // 비밀번호 체크
+            if (newPassword != null && !newPassword.isBlank()) {    // 새로운 비밀번호를 입력했으면
+                member.setPassword(newPassword);    // 회원 객체의 비밀번호를 새로운 비밀번호로 변경
+            }
             result = memberDao.updateMember(member);    // 회원정보 수정
         }
         
@@ -53,9 +71,11 @@ public class MemberController {
     }
 
     @RequestMapping(value = "/withdrawal", method = RequestMethod.POST)
-    public String withdrawal(@RequestParam Map<String, String> params, Model model) {
+    public String withdrawal(@RequestParam Map<String, String> params, Model model) throws GeneralSecurityException {
         // 회원 탈퇴
         int result = -1;    //  1: 탈퇴성공, 0: 해당 정보 없음, -1: 탈퇴실패
+        params.put("password", crypt.encrypt(params.get("password")));  // 비밀번호 암호화
+
         result = memberDao.withdrawal(params);
 
         model.addAttribute("result", result);
@@ -64,8 +84,9 @@ public class MemberController {
     }
 
     @RequestMapping(value = "/sign-in", method = RequestMethod.POST)
-    public String sign_in(@ModelAttribute MemberVO member, HttpSession session, Model model) {
+    public String sign_in(@ModelAttribute MemberVO member, HttpSession session, Model model) throws GeneralSecurityException {
         // 로그인
+        member.setPassword(crypt.encrypt(member.getPassword()));    // 비밀번호 암호화
         boolean result = memberDao.sign_in(member); // 로그인 성공 여부
 
         if (result) {   // 로그인 성공 시
