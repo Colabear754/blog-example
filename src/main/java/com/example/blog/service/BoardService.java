@@ -11,7 +11,7 @@ public interface BoardService {
     public int getDocumentCount(int category_id);
     public int write(BoardVO board);
     public int update(BoardVO board);
-    public int delete(int seq);
+    public int delete(String seq);
     public boolean isLike(Map<String, String> params);
     public int like(Map<String, String> params);
     public int cancelLike(Map<String, String> params);

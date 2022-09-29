@@ -40,7 +40,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public int delete(int seq) {
+    public int delete(String seq) {
         return mapper.delete(seq);
     }
 
