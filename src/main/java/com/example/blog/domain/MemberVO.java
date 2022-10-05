@@ -19,6 +19,7 @@ public class MemberVO {
     }
 
     public MemberVO(String id, String password, String name, String phone, String department, Date sign_up_date) throws GeneralSecurityException {
+        crypto = new Crypto();
         this.id = id;
         this.password = crypto.encrypt(password);
         this.name = crypto.encrypt(name);
