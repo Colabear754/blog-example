@@ -1,4 +1,4 @@
-package com.example.blog.crypt;
+package com.example.blog.crypto;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Base64;
 
-public class AES256 {
+public class Crypto {
     private static final String algorithm = "AES/CBC/PKCS5Padding";    // 암호화 알고리즘, 패딩
     private static final String key = "58392176596138482241443582018901";
     private static final String iv = key.substring(0, 16);
