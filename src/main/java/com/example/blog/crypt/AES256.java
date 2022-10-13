@@ -14,6 +14,10 @@ public class AES256 {
 
     public String encrypt(String plaintext) throws GeneralSecurityException {
         // 암호화
+        if (plaintext == null) {
+            return null;
+        }
+
         Cipher cipher = Cipher.getInstance(algorithm);
         SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), "AES");
         IvParameterSpec paramSpec = new IvParameterSpec(iv.getBytes());
@@ -26,6 +30,10 @@ public class AES256 {
 
     public String decrypt(String ciphertext) throws GeneralSecurityException {
         // 복호화
+        if (ciphertext == null) {
+            return null;
+        }
+
         Cipher cipher = Cipher.getInstance(algorithm);
         SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), "AES");
         IvParameterSpec paramSpec = new IvParameterSpec(iv.getBytes());
