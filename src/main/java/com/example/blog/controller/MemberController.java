@@ -1,6 +1,6 @@
 package com.example.blog.controller;
 
-import com.example.blog.crypt.AES256;
+import com.example.blog.crypto.Crypto;
 import com.example.blog.domain.MemberVO;
 import com.example.blog.mapper.MemberMapper;
 import io.swagger.annotations.*;
@@ -19,7 +19,7 @@ import java.util.Map;
 public class MemberController {
     @Autowired
     MemberMapper memberDao;
-    private final AES256 crypt = new AES256();
+    private final Crypto crypt = new Crypto();
 
     @ApiOperation("ID 중복확인")
     @ApiImplicitParam(name = "id", value = "중복 확인을 할 계정", required = true)
