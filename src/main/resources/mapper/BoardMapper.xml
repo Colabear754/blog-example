@@ -9,10 +9,10 @@
                 select board.*
                 from board
                 <choose>
-                    <when test="category_id > 0">
+                    <when test="category_id gt 0">
                         where CATEGORY_ID = #{category_id}
                     </when>
-                    <when test="category_id < 0">
+                    <when test="category_id lt 0">
                         where CATEGORY_ID is null
                     </when>
                 </choose>
@@ -32,10 +32,10 @@
         select count(*)
         from BOARD
         <choose>
-            <when test="category_id > 0">
+            <when test="category_id gt 0">
                 where CATEGORY_ID = #{category_id}
             </when>
-            <when test="category_id < 0">
+            <when test="category_id lt 0">
                 where CATEGORY_ID is null
             </when>
         </choose>
@@ -43,12 +43,26 @@
 
     <insert id="write">
         insert into board
-        values (DOC_SEQ.nextval, systimestamp, #{category_id}, #{subject}, #{content}, #{thumbnail}, 0, 0)
+        <if test="category_id == 0">
+            values (DOC_SEQ.nextval, systimestamp, null, #{subject}, #{content}, #{thumbnail}, 0, 0)
+        </if>
+        <if test="category_id > 0">
+            values (DOC_SEQ.nextval, systimestamp, #{category_id}, #{subject}, #{content}, #{thumbnail}, 0, 0)
+        </if>
+        <selectKey keyProperty="seq" resultType="int" order="AFTER">
+            select DOC_SEQ.currval as seq
+            from DUAL
+        </selectKey>
     </insert>
 
     <update id="update">
         update board
-        set CATEGORY_ID = #{category_id}, SUBJECT = #{subject}, CONTENT = #{content}, THUMBNAIL = #{thumbnail}
+        <if test="category_id == 0">
+            set CATEGORY_ID = null, SUBJECT = #{subject}, CONTENT = #{content}, THUMBNAIL = #{thumbnail}
+        </if>
+        <if test="category_id > 0">
+            set CATEGORY_ID = #{category_id}, SUBJECT = #{subject}, CONTENT = #{content}, THUMBNAIL = #{thumbnail}
+        </if>
         where SEQ = #{seq}
     </update>
 
@@ -74,4 +88,26 @@
         from LIKE_DOCUMENT
         where ID = #{id} and SEQ = #{seq}
     </delete>
+
+    <select id="getLikeCount" resultType="_int">
+        select count(*)
+        from LIKE_DOCUMENT
+        where SEQ = #{seq}
+    </select>
+
+    <update id="increaseViewCnt">
+        update BOARD
+        set VIEW_CNT = VIEW_CNT + 1
+        where SEQ = #{seq}
+    </update>
+
+    <update id="updateLikeCnt">
+        update BOARD
+        set LIKE_CNT = (
+            select count(*)
+            from LIKE_DOCUMENT
+            where SEQ = #{seq}
+        )
+        where SEQ = #{seq}
+    </update>
 </mapper>

@@ -1,5 +1,6 @@
 package com.example.blog.domain;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
@@ -13,6 +14,7 @@ public class BoardVO {
     private String thumbnail;
     private int view_cnt;
     private int like_cnt;
+    @ApiModelProperty(hidden = true)
     private MultipartFile uploadFile;
 
     public BoardVO() {

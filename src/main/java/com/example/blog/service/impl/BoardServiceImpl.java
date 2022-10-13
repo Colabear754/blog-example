@@ -40,22 +40,37 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public int delete(String seq) {
+    public int delete(int seq) {
         return mapper.delete(seq);
     }
 
     @Override
-    public boolean isLike(Map<String, String> params) {
+    public boolean isLike(Map<String, Object> params) {
         return mapper.isLike(params);
     }
 
     @Override
-    public int like(Map<String, String> params) {
+    public int like(Map<String, Object> params) {
         return mapper.like(params);
     }
 
     @Override
-    public int cancelLike(Map<String, String> params) {
+    public int cancelLike(Map<String, Object> params) {
         return mapper.cancelLike(params);
+    }
+
+    @Override
+    public int getLikeCount(int seq) {
+        return mapper.getLikeCount(seq);
+    }
+
+    @Override
+    public int increaseViewCnt(int seq) {
+        return mapper.increaseViewCnt(seq);
+    }
+
+    @Override
+    public int updateLikeCnt(int seq) {
+        return mapper.updateLikeCnt(seq);
     }
 }
