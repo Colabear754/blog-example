@@ -1,13 +1,21 @@
 package com.example.blog.domain;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.sql.Date;
 
 public class MemberVO {
+    @ApiModelProperty(value = "계정", required = true)
     private String id;
+    @ApiModelProperty(value = "비밀번호", required = true)
     private String password;
+    @ApiModelProperty(value = "이름", required = true)
     private String name;
+    @ApiModelProperty(value = "전화번호", allowEmptyValue = true)
     private String phone;
+    @ApiModelProperty(value = "부서명", allowEmptyValue = true)
     private String department;
+    @ApiModelProperty(hidden = true)
     private Date sign_up_date;
 
     public MemberVO() {
