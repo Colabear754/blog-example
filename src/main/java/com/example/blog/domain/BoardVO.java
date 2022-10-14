@@ -14,8 +14,6 @@ public class BoardVO {
     private String thumbnail;
     private int view_cnt;
     private int like_cnt;
-    @ApiModelProperty(hidden = true)
-    private MultipartFile uploadFile;
 
     public BoardVO() {
         super();
@@ -94,13 +92,5 @@ public class BoardVO {
 
     public void setLike_cnt(int like_cnt) {
         this.like_cnt = like_cnt;
-    }
-
-    public MultipartFile getUploadFile() {
-        return uploadFile;
-    }
-
-    public void setUploadFile(MultipartFile uploadFile) {
-        this.uploadFile = uploadFile;
     }
 }

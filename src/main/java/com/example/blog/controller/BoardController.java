@@ -9,15 +9,12 @@ import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,14 +87,14 @@ public class BoardController {
             @ApiImplicitParam(name = "seq", value = "추천할 글 번호", required = true)
     })
     @PostMapping("/document/{seq}/like")
-    public String post_like(@PathVariable int seq, @RequestParam String id, HttpServletRequest request, Model model) {
+    public String post_like(@PathVariable int seq, @RequestParam(required = false) String id, HttpServletRequest request, Model model) {
         /*
-        * 글 추천
-        * result 값에 따른 결과
-        * -1: 작업 실패
-        * 0: 이미 추천된 게시물
-        * 1: 추천 성공
-        */
+         * 글 추천
+         * result 값에 따른 결과
+         * -1: 작업 실패
+         * 0: 이미 추천된 게시물
+         * 1: 추천 성공
+         */
         int result = -1;
         Map<String, Object> input = new HashMap<>();
 
@@ -127,7 +124,7 @@ public class BoardController {
             @ApiImplicitParam(name = "seq", value = "추천 취소할 글 번호", required = true)
     })
     @DeleteMapping("/document/{seq}/like")
-    public String delete_like(@PathVariable int seq, @RequestParam String id, HttpServletRequest request, Model model) {
+    public String delete_like(@PathVariable int seq, @RequestParam(required = false) String id, HttpServletRequest request, Model model) {
         /*
          * 글 추천 취소
          * result 값에 따른 결과
@@ -162,7 +159,13 @@ public class BoardController {
 
     })
     @PostMapping(value = "/write", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public BoardVO write(@ApiIgnore BoardVO document, @ApiParam("업로드 할 썸네일") MultipartFile uploadFile, HttpServletRequest request, Model model) throws IOException {
+    public BoardVO write(
+            @RequestParam String subject,
+            @RequestParam String content,
+            @RequestParam(required = false) String category_id,
+            @ApiParam("업로드 할 썸네일") @RequestBody(required = false) MultipartFile uploadFile,
+            HttpServletRequest request,
+            Model model) throws IOException {
         // 글 작성
         int result = -1;
         StringBuilder dir = new StringBuilder(request.getServletContext().getRealPath("\\resources\\blog\\img")); // 썸네일 저장경로
@@ -180,6 +183,10 @@ public class BoardController {
             uploadFile.transferTo(new File(dir + filename));    // 파일을 서버에 등록
         }
 
+        BoardVO document = new BoardVO();
+        document.setSubject(subject);
+        document.setContent(content);
+        document.setCategory_id(category_id != null ? Integer.parseInt(category_id) : 0);
         document.setThumbnail(filename);
         boardDao.write(document);
         result = document.getSeq();
@@ -199,12 +206,19 @@ public class BoardController {
 
     })
     @PostMapping(value = "/document/update/{seq}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public BoardVO update(@PathVariable int seq, @ApiIgnore BoardVO document, @ApiParam("업로드 할 썸네일(기존 썸네일은 삭제)") MultipartFile uploadFile, HttpServletRequest request, Model model) throws IOException {
+    public BoardVO update(
+            @PathVariable int seq,
+            @RequestParam String subject,
+            @RequestParam String content,
+            @RequestParam(required = false) String category_id,
+            @ApiParam("업로드 할 썸네일") @RequestBody(required = false) MultipartFile uploadFile,
+            HttpServletRequest request,
+            Model model) throws IOException {
         // 글 수정
         int result = -1;
-        document.setSeq(seq);
+        BoardVO document = boardDao.getDocument(seq);
         StringBuilder dir = new StringBuilder(request.getServletContext().getRealPath("\\resources\\blog\\img")); // 썸네일 저장경로
-        String filename = null; // 썸네일 파일 명
+        String filename; // 썸네일 파일 명
 
         Files.createDirectories(Paths.get(dir.toString()));    // 썸네일을 저장할 디렉토리가 없으면 생성
 
@@ -218,9 +232,12 @@ public class BoardController {
 
             uploadFile.transferTo(new File(dir + filename));    // 파일을 서버에 등록
             pre_thumb.delete(); // 기존 썸네일 파일 삭제
+            document.setThumbnail(filename);    // 새 썸네일 지정
         }
 
-        document.setThumbnail(filename);    // 새 썸네일 지정
+        document.setSubject(subject);
+        document.setContent(content);
+        document.setCategory_id(category_id != null ? Integer.parseInt(category_id) : 0);
         result = boardDao.update(document);
         document = boardDao.getDocument(seq);
 
