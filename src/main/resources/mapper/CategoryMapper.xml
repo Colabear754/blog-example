@@ -6,9 +6,19 @@
         from CATEGORY
     </select>
 
+    <select id="getCategory" resultType="CategoryVO">
+        select *
+        from CATEGORY
+        where CATEGORY_ID = #{category_id}
+    </select>
+
     <insert id="addCategory">
         insert into CATEGORY
         values (CAT_SEQ.nextval, #{name})
+        <selectKey keyProperty="category_id" resultType="int" order="AFTER">
+            select CAT_SEQ.currval as category_id
+            from DUAL
+        </selectKey>
     </insert>
 
     <update id="updateCategory">

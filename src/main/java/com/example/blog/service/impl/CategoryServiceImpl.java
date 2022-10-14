@@ -6,6 +6,7 @@ import com.example.blog.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -14,13 +15,18 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryMapper mapper;
 
     @Override
-    public CategoryVO getCategories() {
+    public List<CategoryVO> getCategories() {
         return mapper.getCategories();
     }
 
     @Override
-    public int addCategory(String name) {
-        return mapper.addCategory(name);
+    public CategoryVO getCategory(int category_id) {
+        return mapper.getCategory(category_id);
+    }
+
+    @Override
+    public int addCategory(CategoryVO category) {
+        return mapper.addCategory(category);
     }
 
     @Override
